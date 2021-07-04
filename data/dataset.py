@@ -21,7 +21,7 @@ class Dataset(data.Dataset):
         imgs = [os.path.join(root, img[:-1]) for img in imgs]
         self.imgs = np.random.permutation(imgs)
 
-        # normalize = T.Normalize(mean=[0.5, 0.5, 0.5],
+        # normalize = T.Normalize(mean=[0.5, 0.5, 0.5+],
         #                         std=[0.5, 0.5, 0.5])
 
         normalize = T.Normalize(mean=[0.5], std=[0.5])
@@ -55,13 +55,16 @@ class Dataset(data.Dataset):
 
 
 if __name__ == '__main__':
-    dataset = Dataset(root='/data/Datasets/fv/dataset_v1.1/dataset_mix_aligned_v1.1',
-                      data_list_file='/data/Datasets/fv/dataset_v1.1/mix_20w.txt',
+    dataset = Dataset(root='/home/quang/Downloads/arcface-pytorch/data/Datasets/lfw',
+                      data_list_file='/home/quang/Downloads/arcface-pytorch/data/Datasets/train.txt',
                       phase='test',
                       input_shape=(1, 128, 128))
 
     trainloader = data.DataLoader(dataset, batch_size=10)
     for i, (data, label) in enumerate(trainloader):
+        print(data)
+        print(label.shape)
+        print(type(label))
         # imgs, labels = data
         # print imgs.numpy().shape
         # print data.cpu().numpy()

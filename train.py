@@ -1,17 +1,20 @@
 from __future__ import print_function
 import os
-from data import Dataset
+from data.dataset import Dataset
 import torch
 from torch.utils import data
 import torch.nn.functional as F
-from models import *
+from models.resnet import *
+from models.metrics import *
+from models.focal_loss import *
 import torchvision
-from utils import Visualizer, view_model
+from utils.visualizer import Visualizer
+from utils.view_model import view_model
 import torch
 import numpy as np
 import random
 import time
-from config import Config
+from config.config import *
 from torch.nn import DataParallel
 from torch.optim.lr_scheduler import StepLR
 from test import *
@@ -24,7 +27,6 @@ def save_model(model, save_path, name, iter_cnt):
 
 
 if __name__ == '__main__':
-
     opt = Config()
     if opt.display:
         visualizer = Visualizer()
@@ -88,6 +90,7 @@ if __name__ == '__main__':
             label = label.to(device).long()
             feature = model(data_input)
             output = metric_fc(feature, label)
+
             loss = criterion(output, label)
             optimizer.zero_grad()
             loss.backward()

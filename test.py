@@ -11,10 +11,11 @@ from models import *
 import torch
 import numpy as np
 import time
-from config import Config
+from config.config import *
 from torch.nn import DataParallel
 
-
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device:', "cpu")
 def get_lfw_list(pair_list):
     with open(pair_list, 'r') as fd:
         pairs = fd.readlines()
@@ -42,7 +43,20 @@ def load_image(img_path):
     image /= 127.5
     return image
 
+def processImageInput(image):
+    image = np.dstack((image, np.fliplr(image)))
 
+    # image=np.expand_dims(image, axis=1)
+    image = image.transpose((2, 0, 1))
+    # image = image.transpose((1, 0, 2))
+
+    image = image[:, np.newaxis, :, :]
+    image = image.astype(np.float32, copy=False)
+    image -= 127.5
+    image /= 127.5
+    data = torch.from_numpy(image)
+    data = data.to(device)
+    return data
 def get_featurs(model, test_list, batch_size=10):
     images = None
     features = None
@@ -67,6 +81,8 @@ def get_featurs(model, test_list, batch_size=10):
 
             fe_1 = output[::2]
             fe_2 = output[1::2]
+            print(fe_1.shape)
+            print(fe_2)
             feature = np.hstack((fe_1, fe_2))
             # print(feature.shape)
 
